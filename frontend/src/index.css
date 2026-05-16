@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-400: #2dd4bf;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+  --color-brand-700: #0f766e;
+
+  --color-donor-400: #fb923c;
+  --color-donor-500: #f97316;
+  --color-donor-600: #ea580c;
+
+  --color-receiver-400: #60a5fa;
+  --color-receiver-500: #3b82f6;
+  --color-receiver-600: #2563eb;
+
+  --color-ai-400: #c4b5fd;
+  --color-ai-500: #8b5cf6;
+  --color-ai-600: #7c3aed;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    @apply min-h-dvh min-w-0 max-w-[100dvw] overflow-x-clip bg-stone-100 font-sans text-slate-900 antialiased;
+  }
+  #root {
+    @apply min-h-dvh min-w-0 max-w-[100dvw] overflow-x-clip;
+  }
+  button:not(:disabled) {
+    @apply cursor-pointer;
+  }
+  a {
+    @apply text-inherit no-underline;
+  }
+}
