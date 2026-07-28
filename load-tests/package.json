@@ -6,7 +6,8 @@
   "scripts": {
     "test:baseline": "node baseline-test.js",
     "test:health": "node baseline-test.js",
-    "generate:report": "node generate-excel-report.js"
+    "generate:report": "node generate-excel-report.js",
+    "generate:cases": "node generate-test-cases-excel.js"
   },
   "dependencies": {
     "autocannon": "^7.15.0",

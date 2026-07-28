@@ -48,24 +48,32 @@ jobs:
           cd selenium-tests
           npm test || true
 
-      - name: 7. Verify & Generate Selenium Excel Report
+      - name: 7. Verify & Generate Selenium E2E Excel Report
         if: always()
         run: |
           cd selenium-tests
           ls -la reports/ || true
           npm run report:excel || true
 
-      - name: 8. Upload Selenium E2E Excel Report & Artifacts
+      - name: 8. Upload Selenium E2E Excel Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: 1-Selenium-E2E-Report-Excel
+          path: selenium-tests/reports/E2E_Report.xlsx
+          retention-days: 30
+
+      - name: 9. Upload Selenium E2E Logs & Screenshots Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 1-Selenium-E2E-Logs-Screenshots
           path: |
-            selenium-tests/reports/E2E_Report.xlsx
             selenium-tests/reports/mochawesome-report/
             selenium-tests/screenshots/
             selenium-tests/logs/
           retention-days: 30
+          ignore-missing-files: true
 
   # ---------------------------------------------------------------------------
   # 2. Selenium Login & Auth 300 Test Suite
@@ -168,18 +176,21 @@ jobs:
           cd load-tests
           npm run test:baseline || true
 
-      - name: 5. Generate Load Test Excel Report
+      - name: 5. Generate Load Test Excel Reports
         if: always()
         run: |
           cd load-tests
           npm run generate:report || true
+          npm run generate:cases || true
 
-      - name: 6. Upload Load Test Excel Report
+      - name: 6. Upload Load Test Excel Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: 4-Load-Performance-Report-Excel
-          path: load-tests/reports/Load_Test_Report.xlsx
+          path: |
+            load-tests/reports/Load_Test_Report.xlsx
+            load-tests/reports/Load_Test_Cases.xlsx
           retention-days: 30
 
   # ---------------------------------------------------------------------------
