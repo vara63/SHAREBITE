@@ -22,8 +22,7 @@ jobs:
       - name: 2. Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
-          cache: 'npm'
+          node-version: 20.x
 
       - name: 3. Install Root & Test Dependencies
         run: |
