@@ -1,0 +1,43 @@
+{
+  "name": "sharebite-selenium-e2e-framework",
+  "version": "2.0.0",
+  "description": "Enterprise Production-Ready E2E Selenium Automation Framework for SHAREBITE (FoodShare AI) React Application",
+  "main": "tests/hooks.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "mocha --config config/mocha.config.js",
+    "test:chrome": "CROSS_BROWSER=chrome npm test",
+    "test:firefox": "CROSS_BROWSER=firefox npm test",
+    "test:edge": "CROSS_BROWSER=edge npm test",
+    "test:headed": "HEADLESS=false npm test",
+    "test:headless": "HEADLESS=true npm test",
+    "report:excel": "node utilities/excelReporter.js"
+  },
+  "keywords": [
+    "selenium",
+    "webdriver",
+    "mocha",
+    "chai",
+    "exceljs",
+    "mochawesome",
+    "winston",
+    "react",
+    "e2e",
+    "testing",
+    "github-actions"
+  ],
+  "author": "Senior QA Automation Architect",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/parser": "^7.26.0",
+    "@babel/traverse": "^7.26.0",
+    "chai": "^4.3.7",
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "mocha": "^10.2.0",
+    "mochawesome": "^7.1.3",
+    "mochawesome-report-generator": "^6.2.0",
+    "selenium-webdriver": "^4.28.0",
+    "winston": "^3.11.0"
+  }
+}

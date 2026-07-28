@@ -1,0 +1,15 @@
+{
+  "name": "sharebite-load-tests",
+  "version": "1.0.0",
+  "description": "Baseline Performance and Load Testing Suite for SHAREBITE (FoodShare AI)",
+  "main": "baseline-test.js",
+  "scripts": {
+    "test:baseline": "node baseline-test.js",
+    "test:health": "node baseline-test.js",
+    "generate:report": "node generate-excel-report.js"
+  },
+  "dependencies": {
+    "autocannon": "^7.15.0",
+    "exceljs": "^4.4.0"
+  }
+}
