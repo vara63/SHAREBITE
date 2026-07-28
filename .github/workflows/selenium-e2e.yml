@@ -23,9 +23,8 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: 3. Install Root & Test Dependencies
+      - name: 3. Install Frontend & Selenium Dependencies
         run: |
-          npm ci || npm install
           cd frontend && (npm ci || npm install)
           cd ../selenium-tests && npm install
 
