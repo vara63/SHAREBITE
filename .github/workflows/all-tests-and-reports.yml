@@ -35,11 +35,10 @@ jobs:
           cd frontend
           npm run build
 
-      - name: Start Vite Preview Server
+      - name: Start Frontend HTTP Server
         run: |
-          cd frontend
-          npx vite preview --port 5173 &
-          sleep 5
+          python3 -m http.server 5173 --directory frontend/dist &
+          sleep 3
 
       - name: Execute Selenium E2E Tests
         env:

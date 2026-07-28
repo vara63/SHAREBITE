@@ -24,16 +24,9 @@ class DriverFactory {
           "--disable-dev-shm-usage",
           "--disable-gpu",
           "--disable-popup-blocking",
-          "--ignore-certificate-errors"
+          "--ignore-certificate-errors",
+          "--remote-allow-origins=*"
         );
-
-        // Capture browser console logs
-        const loggingPrefs = new (require("selenium-webdriver").logging.Preferences)();
-        loggingPrefs.setLevel(
-          require("selenium-webdriver").logging.Type.BROWSER,
-          require("selenium-webdriver").logging.Level.ALL
-        );
-        chromeOptions.setLoggingPrefs(loggingPrefs);
 
         builder = builder.forBrowser("chrome").setChromeOptions(chromeOptions);
         break;

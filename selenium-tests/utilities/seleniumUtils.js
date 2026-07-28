@@ -6,7 +6,11 @@ const logger = require("./logger");
 
 class SeleniumUtils {
   constructor(driver) {
-    this.driver = driver;
+    this._driver = driver;
+  }
+
+  get driver() {
+    return this._driver || global.driver;
   }
 
   // Explicit Wait for Element Located & Visible

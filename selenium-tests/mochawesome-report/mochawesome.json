@@ -1,0 +1,720 @@
+{
+  "stats": {
+    "suites": 5,
+    "tests": 17,
+    "passes": 1,
+    "pending": 0,
+    "failures": 16,
+    "start": "2026-07-28T05:22:21.558Z",
+    "end": "2026-07-28T05:23:53.659Z",
+    "duration": 92101,
+    "testsRegistered": 17,
+    "passPercent": 5.88235294117647,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "512f59f9-857c-4550-96ac-2afdc953a39a",
+      "title": "",
+      "fullFile": "",
+      "file": "",
+      "beforeHooks": [
+        {
+          "title": "\"before all\" hook in \"{root}\"",
+          "fullTitle": "\"before all\" hook in \"{root}\"",
+          "timedOut": false,
+          "duration": 29198,
+          "state": null,
+          "speed": null,
+          "pass": false,
+          "fail": false,
+          "pending": false,
+          "context": null,
+          "code": "this.timeout(60000);\nlogger.info(\"==================================================================\");\nlogger.info(\" Starting SHAREBITE Enterprise E2E Selenium Test Suite Execution \");\nlogger.info(\"==================================================================\");\nsuiteStartTime = Date.now();\ntry {\n  globalDriver = await DriverFactory.createDriver(config.browser, config.headless);\n  globalUtils = new SeleniumUtils(globalDriver);\n  global.driver = globalDriver;\n  global.seleniumUtils = globalUtils;\n} catch (error) {\n  logger.error(`Fatal driver creation error: ${error.message}`);\n  throw error;\n}",
+          "err": {},
+          "uuid": "e4cd1766-6ed4-4ba9-a431-74c7402dc11d",
+          "parentUUID": "512f59f9-857c-4550-96ac-2afdc953a39a",
+          "isHook": true,
+          "skipped": false
+        },
+        {
+          "title": "\"before each\" hook in \"{root}\"",
+          "fullTitle": "\"before each\" hook in \"{root}\"",
+          "timedOut": false,
+          "duration": 0,
+          "state": null,
+          "speed": null,
+          "pass": false,
+          "fail": false,
+          "pending": false,
+          "context": null,
+          "code": "this.testStartTime = Date.now();\nconst testTitle = this.currentTest ? this.currentTest.fullTitle() : \"E2E Test Step\";\nlogger.info(`>>> RUNNING TEST: [ ${testTitle} ]`);",
+          "err": {},
+          "uuid": "c55894d0-aa9a-4cfd-8ecc-a659bd1dd12f",
+          "parentUUID": "512f59f9-857c-4550-96ac-2afdc953a39a",
+          "isHook": true,
+          "skipped": false
+        }
+      ],
+      "afterHooks": [
+        {
+          "title": "\"after all\" hook in \"{root}\"",
+          "fullTitle": "\"after all\" hook in \"{root}\"",
+          "timedOut": false,
+          "duration": 1188,
+          "state": null,
+          "speed": null,
+          "pass": false,
+          "fail": false,
+          "pending": false,
+          "context": null,
+          "code": "const totalDuration = Date.now() - suiteStartTime;\nif (globalDriver) {\n  try {\n    await globalDriver.quit();\n    logger.info(\"WebDriver instance cleanly closed.\");\n  } catch (err) {\n    logger.error(`Error closing driver: ${err.message}`);\n  }\n}\n// Compile Summary for Excel Sheet 1\nconst results = excelReporter.results;\nconst passedCount = results.filter((r) => r.status === \"PASSED\").length;\nconst failedCount = results.filter((r) => r.status === \"FAILED\").length;\nconst skippedCount = results.filter((r) => r.status === \"SKIPPED\").length;\nconst totalCount = results.length;\nconst summary = {\n  total: totalCount,\n  passed: passedCount,\n  failed: failedCount,\n  skipped: skippedCount,\n  duration: totalDuration\n};\ntry {\n  await excelReporter.generateExcelReport(summary);\n} catch (err) {\n  logger.error(`Error generating Excel report: ${err.message}`);\n}\nlogger.info(\"==================================================================\");\nlogger.info(` Test Suite Finished. Total: ${totalCount} | Passed: ${passedCount} | Failed: ${failedCount}`);\nlogger.info(\"==================================================================\");",
+          "err": {},
+          "uuid": "dd11c5c9-9068-47a3-abb4-a38c6f4b83db",
+          "parentUUID": "512f59f9-857c-4550-96ac-2afdc953a39a",
+          "isHook": true,
+          "skipped": false
+        },
+        {
+          "title": "\"after each\" hook in \"{root}\"",
+          "fullTitle": "\"after each\" hook in \"{root}\"",
+          "timedOut": false,
+          "duration": 129,
+          "state": null,
+          "speed": null,
+          "pass": false,
+          "fail": false,
+          "pending": false,
+          "context": null,
+          "code": "const test = this.currentTest;\nconst testTitle = test ? test.fullTitle() : \"Test Scenario\";\nconst durationMs = Date.now() - (this.testStartTime || Date.now());\nconst durationStr = `${(durationMs / 1000).toFixed(2)}s`;\nconst moduleName = test.file ? test.file.split(/[\\\\/]/).pop().replace(\".spec.js\", \"\") : \"General\";\nlet status = \"PASSED\";\nlet failureReason = \"\";\nlet screenshotPath = \"N/A\";\nlet currentUrl = \"N/A\";\nif (test.state === \"failed\") {\n  status = \"FAILED\";\n  failureReason = test.err ? test.err.message : \"Assertion or element timeout failure\";\n  logger.error(`TEST FAILED: [ ${testTitle} ] - Reason: ${failureReason}`);\n  if (globalDriver) {\n    try {\n      const failureData = await globalUtils.captureFailureDetails(testTitle);\n      screenshotPath = failureData.screenshotPath;\n      currentUrl = failureData.currentUrl;\n      excelReporter.addFailure({\n        testName: testTitle,\n        failureReason: failureReason,\n        screenshotPath: screenshotPath,\n        browser: config.browser.toUpperCase(),\n        url: currentUrl\n      });\n    } catch (err) {\n      logger.error(`Could not collect failure artifacts: ${err.message}`);\n    }\n  }\n} else if (test.state === \"pending\") {\n  status = \"SKIPPED\";\n} else {\n  logger.info(`TEST PASSED: [ ${testTitle} ] (${durationStr})`);\n}\n// Record Test Case row for Excel Sheet 2\nexcelReporter.addTestCaseResult({\n  testId: `TC_${Math.floor(100 + Math.random() * 900)}`,\n  module: moduleName.toUpperCase(),\n  scenarioName: testTitle,\n  browser: config.browser.toUpperCase(),\n  status: status,\n  startTime: new Date(this.testStartTime || Date.now()).toLocaleTimeString(),\n  endTime: new Date().toLocaleTimeString(),\n  duration: durationStr\n});\n// Record Execution Log for Excel Sheet 4\nexcelReporter.addLog({\n  timestamp: new Date().toLocaleString(),\n  testName: testTitle,\n  stepDescription: `Execution of test step in ${moduleName}`,\n  result: status,\n  remarks: status === \"FAILED\" ? `Failed: ${failureReason}` : \"Completed successfully\"\n});",
+          "err": {},
+          "uuid": "12fd0f98-df37-4e8b-9f46-e17181e26fd7",
+          "parentUUID": "512f59f9-857c-4550-96ac-2afdc953a39a",
+          "isHook": true,
+          "skipped": false
+        }
+      ],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "aa1acb78-b2cc-490a-9afc-0437289c8ca2",
+          "title": "Authentication & Session E2E Test Suite",
+          "fullFile": "C:\\Users\\HP\\Downloads\\SHAREBITE-main\\selenium-tests\\tests\\auth.spec.js",
+          "file": "\\tests\\auth.spec.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Authentication & Session E2E Test Suite\"",
+              "fullTitle": "Authentication & Session E2E Test Suite \"before all\" hook in \"Authentication & Session E2E Test Suite\"",
+              "timedOut": false,
+              "duration": 1,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "authPage = new AuthPage(global.driver);\nlandingPage = new LandingPage(global.driver);\ndonorPage = new DonorDashboardPage(global.driver);\nreceiverPage = new ReceiverDashboardPage(global.driver);",
+              "err": {},
+              "uuid": "5686ee3d-2fbc-49c2-91d6-04115a78d127",
+              "parentUUID": "aa1acb78-b2cc-490a-9afc-0437289c8ca2",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "AUTH_01: Validate login form with empty username and password",
+              "fullTitle": "Authentication & Session E2E Test Suite AUTH_01: Validate login form with empty username and password",
+              "timedOut": false,
+              "duration": 2475,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await authPage.openLogin();\nawait authPage.login(\"\", \"\");\n// Form HTML5 / custom JS prevents submission or triggers error\nconst url = await authPage.getCurrentUrl();\nexpect(url).to.include(\"/login\");",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async AuthPage.open (pages\\basePage.js:22:5)\n    at async AuthPage.openLogin (pages\\authPage.js:27:5)\n    at async Context.<anonymous> (tests\\auth.spec.js:22:5)",
+                "diff": null
+              },
+              "uuid": "1b8fe0d4-0838-4e65-b61b-d522f895ea0c",
+              "parentUUID": "aa1acb78-b2cc-490a-9afc-0437289c8ca2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "AUTH_02: Validate login rejection with invalid credentials",
+              "fullTitle": "Authentication & Session E2E Test Suite AUTH_02: Validate login rejection with invalid credentials",
+              "timedOut": false,
+              "duration": 2532,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await authPage.openLogin();\nawait authPage.login(config.credentials.invalidUser.email, config.credentials.invalidUser.password, \"donor\");\nconst errorMsg = await authPage.getErrorMessage();\nexpect(errorMsg).to.satisfy(\n  (msg) => msg.includes(\"Could not sign in\") || msg.includes(\"Check email and password\") || msg.length >= 0\n);",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async AuthPage.open (pages\\basePage.js:22:5)\n    at async AuthPage.openLogin (pages\\authPage.js:27:5)\n    at async Context.<anonymous> (tests\\auth.spec.js:30:5)",
+                "diff": null
+              },
+              "uuid": "a2465d63-7b05-47e2-9e2c-e3fe81842e81",
+              "parentUUID": "aa1acb78-b2cc-490a-9afc-0437289c8ca2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "AUTH_03: Validate successful Donor login and role-based redirect",
+              "fullTitle": "Authentication & Session E2E Test Suite AUTH_03: Validate successful Donor login and role-based redirect",
+              "timedOut": false,
+              "duration": 2679,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await authPage.openLogin();\nawait authPage.login(config.credentials.donor.email, config.credentials.donor.password, \"donor\");\nconst url = await donorPage.getCurrentUrl();\nexpect(url).to.include(\"/donor\");",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async AuthPage.open (pages\\basePage.js:22:5)\n    at async AuthPage.openLogin (pages\\authPage.js:27:5)\n    at async Context.<anonymous> (tests\\auth.spec.js:39:5)",
+                "diff": null
+              },
+              "uuid": "1e445e86-958a-4aa8-834e-cc14e9d166de",
+              "parentUUID": "aa1acb78-b2cc-490a-9afc-0437289c8ca2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "AUTH_04: Validate session persistence upon page refresh",
+              "fullTitle": "Authentication & Session E2E Test Suite AUTH_04: Validate session persistence upon page refresh",
+              "timedOut": false,
+              "duration": 378,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await donorPage.refresh();\nconst url = await donorPage.getCurrentUrl();\nexpect(url).to.include(\"/donor\");",
+              "err": {
+                "message": "AssertionError: expected 'http://localhost:5173/login' to include '/donor'",
+                "estack": "AssertionError: expected 'http://localhost:5173/login' to include '/donor'\n    at Context.<anonymous> (tests\\auth.spec.js:48:20)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)",
+                "diff": null
+              },
+              "uuid": "92e7d617-c452-4e09-9a6f-0290e5419c17",
+              "parentUUID": "aa1acb78-b2cc-490a-9afc-0437289c8ca2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "AUTH_05: Validate successful Donor Logout",
+              "fullTitle": "Authentication & Session E2E Test Suite AUTH_05: Validate successful Donor Logout",
+              "timedOut": false,
+              "duration": 5045,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "await donorPage.logout();\nconst url = await authPage.getCurrentUrl();\nexpect(url).to.not.include(\"/donor\");",
+              "err": {},
+              "uuid": "8b4c4ef7-681b-4179-8e8f-a72b28735887",
+              "parentUUID": "aa1acb78-b2cc-490a-9afc-0437289c8ca2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "AUTH_06: Validate protected donor route redirects unauthenticated user",
+              "fullTitle": "Authentication & Session E2E Test Suite AUTH_06: Validate protected donor route redirects unauthenticated user",
+              "timedOut": false,
+              "duration": 245,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await donorPage.open(\"/donor/overview\");\nconst url = await donorPage.getCurrentUrl();\nexpect(url).to.include(\"/login\");",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async DonorDashboardPage.open (pages\\basePage.js:22:5)\n    at async Context.<anonymous> (tests\\auth.spec.js:58:5)",
+                "diff": null
+              },
+              "uuid": "bb3e07f4-3067-4869-9af1-1a45fb055aa9",
+              "parentUUID": "aa1acb78-b2cc-490a-9afc-0437289c8ca2",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "AUTH_07: Validate successful Receiver login and role-based redirect",
+              "fullTitle": "Authentication & Session E2E Test Suite AUTH_07: Validate successful Receiver login and role-based redirect",
+              "timedOut": false,
+              "duration": 2368,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await authPage.openLogin();\nawait authPage.login(config.credentials.receiver.email, config.credentials.receiver.password, \"receiver\");\nconst url = await receiverPage.getCurrentUrl();\nexpect(url).to.include(\"/receiver\");",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async AuthPage.open (pages\\basePage.js:22:5)\n    at async AuthPage.openLogin (pages\\authPage.js:27:5)\n    at async Context.<anonymous> (tests\\auth.spec.js:64:5)",
+                "diff": null
+              },
+              "uuid": "8f94837a-c6d1-48e1-9f4c-dd4d337826a3",
+              "parentUUID": "aa1acb78-b2cc-490a-9afc-0437289c8ca2",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "8b4c4ef7-681b-4179-8e8f-a72b28735887"
+          ],
+          "failures": [
+            "1b8fe0d4-0838-4e65-b61b-d522f895ea0c",
+            "a2465d63-7b05-47e2-9e2c-e3fe81842e81",
+            "1e445e86-958a-4aa8-834e-cc14e9d166de",
+            "92e7d617-c452-4e09-9a6f-0290e5419c17",
+            "bb3e07f4-3067-4869-9af1-1a45fb055aa9",
+            "8f94837a-c6d1-48e1-9f4c-dd4d337826a3"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 15722,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 60000
+        },
+        {
+          "uuid": "85e36307-9fed-49cf-be5b-ce6b4a482c67",
+          "title": "Form Validation & Input Rules E2E Test Suite",
+          "fullFile": "C:\\Users\\HP\\Downloads\\SHAREBITE-main\\selenium-tests\\tests\\forms.spec.js",
+          "file": "\\tests\\forms.spec.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Form Validation & Input Rules E2E Test Suite\"",
+              "fullTitle": "Form Validation & Input Rules E2E Test Suite \"before all\" hook in \"Form Validation & Input Rules E2E Test Suite\"",
+              "timedOut": false,
+              "duration": 0,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "authPage = new AuthPage(global.driver);\ndonorPage = new DonorDashboardPage(global.driver);",
+              "err": {},
+              "uuid": "9f55b7c6-1d23-4868-a9fd-d2a37c48cf3d",
+              "parentUUID": "85e36307-9fed-49cf-be5b-ce6b4a482c67",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "FORM_01: Validate Registration form required fields validation",
+              "fullTitle": "Form Validation & Input Rules E2E Test Suite FORM_01: Validate Registration form required fields validation",
+              "timedOut": false,
+              "duration": 2147,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await authPage.openRegister();\nawait authPage.register(\"\", \"\", \"\", \"\", \"donor\");\nconst url = await authPage.getCurrentUrl();\nexpect(url).to.include(\"/register\");",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async AuthPage.open (pages\\basePage.js:22:5)\n    at async AuthPage.openRegister (pages\\authPage.js:31:5)\n    at async Context.<anonymous> (tests\\forms.spec.js:16:5)",
+                "diff": null
+              },
+              "uuid": "f814f290-ec2a-4f9a-b6eb-bcd6e6119576",
+              "parentUUID": "85e36307-9fed-49cf-be5b-ce6b4a482c67",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "FORM_02: Validate Registration email format constraints",
+              "fullTitle": "Form Validation & Input Rules E2E Test Suite FORM_02: Validate Registration email format constraints",
+              "timedOut": false,
+              "duration": 157,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await authPage.openRegister();\nawait authPage.register(\"Test User\", \"invalid_email_format\", \"Pass123!\", \"Hyderabad\", \"donor\");\nconst errorMsg = await authPage.getErrorMessage();\nconst currentUrl = await authPage.getCurrentUrl();\nexpect(currentUrl).to.include(\"/register\");",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async AuthPage.open (pages\\basePage.js:22:5)\n    at async AuthPage.openRegister (pages\\authPage.js:31:5)\n    at async Context.<anonymous> (tests\\forms.spec.js:23:5)",
+                "diff": null
+              },
+              "uuid": "5d98901c-e4a9-4d16-bac1-094e153b001a",
+              "parentUUID": "85e36307-9fed-49cf-be5b-ce6b4a482c67",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "FORM_03: Validate Registration field minimum length rules",
+              "fullTitle": "Form Validation & Input Rules E2E Test Suite FORM_03: Validate Registration field minimum length rules",
+              "timedOut": false,
+              "duration": 255,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await authPage.openRegister();\n// Name and Location need at least 2 characters in ShareBite validation rules\nawait authPage.register(\"A\", \"valid@email.com\", \"P\", \"B\", \"donor\");\nconst errorMsg = await authPage.getErrorMessage();\nexpect(errorMsg).to.satisfy((msg) => msg.includes(\"2 characters\") || msg.includes(\"Could not create\") || msg.length >= 0);",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async AuthPage.open (pages\\basePage.js:22:5)\n    at async AuthPage.openRegister (pages\\authPage.js:31:5)\n    at async Context.<anonymous> (tests\\forms.spec.js:31:5)",
+                "diff": null
+              },
+              "uuid": "ff9170ad-18f3-4f18-83fd-5d9c89c6c4f5",
+              "parentUUID": "85e36307-9fed-49cf-be5b-ce6b4a482c67",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "FORM_04: Validate Food Listing form inputs validation rules",
+              "fullTitle": "Form Validation & Input Rules E2E Test Suite FORM_04: Validate Food Listing form inputs validation rules",
+              "timedOut": false,
+              "duration": 2369,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "// Sign in first as donor\nawait authPage.openLogin();\nawait authPage.login(config.credentials.donor.email, config.credentials.donor.password, \"donor\");\n// Open donations form and submit empty fields\nawait donorPage.openDonationsWorkspace();\nawait donorPage.createDonationListing({\n  title: \"Fresh Meal Trays\",\n  category: \"Cooked Meals\",\n  quantity: 25,\n  location: \"Kukatpally Main Hub\",\n  phone: \"+91 9876543210\",\n  pickupWindow: \"2 PM - 6 PM\",\n  hours: 4,\n  notes: \"Packed hygienically in warm boxes.\"\n});\nconst isVisible = await donorPage.isElementVisible(donorPage.noticeBanner);\nexpect(isVisible).to.equal(true);",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async AuthPage.open (pages\\basePage.js:22:5)\n    at async AuthPage.openLogin (pages\\authPage.js:27:5)\n    at async Context.<anonymous> (tests\\forms.spec.js:40:5)",
+                "diff": null
+              },
+              "uuid": "11739c3d-97db-4acc-807d-918b87b412c3",
+              "parentUUID": "85e36307-9fed-49cf-be5b-ce6b4a482c67",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [],
+          "failures": [
+            "f814f290-ec2a-4f9a-b6eb-bcd6e6119576",
+            "5d98901c-e4a9-4d16-bac1-094e153b001a",
+            "ff9170ad-18f3-4f18-83fd-5d9c89c6c4f5",
+            "11739c3d-97db-4acc-807d-918b87b412c3"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 4928,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 60000
+        },
+        {
+          "uuid": "f4fd5963-c659-478c-ae39-9f54472b3433",
+          "title": "UI Components & Navigation E2E Test Suite",
+          "fullFile": "C:\\Users\\HP\\Downloads\\SHAREBITE-main\\selenium-tests\\tests\\ui-navigation.spec.js",
+          "file": "\\tests\\ui-navigation.spec.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"UI Components & Navigation E2E Test Suite\"",
+              "fullTitle": "UI Components & Navigation E2E Test Suite \"before all\" hook in \"UI Components & Navigation E2E Test Suite\"",
+              "timedOut": false,
+              "duration": 1,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "landingPage = new LandingPage(global.driver);\nreceiverPage = new ReceiverDashboardPage(global.driver);\nauthPage = new AuthPage(global.driver);",
+              "err": {},
+              "uuid": "44acd909-fa2c-4b80-b71c-57edbc952c06",
+              "parentUUID": "f4fd5963-c659-478c-ae39-9f54472b3433",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "NAV_01: Validate public navbar navigation links",
+              "fullTitle": "UI Components & Navigation E2E Test Suite NAV_01: Validate public navbar navigation links",
+              "timedOut": false,
+              "duration": 2373,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await landingPage.openLandingPage();\nawait landingPage.clickNavPersonas();\nexpect(await landingPage.getCurrentUrl()).to.include(\"/personas\");\nawait landingPage.clickNavAiStack();\nexpect(await landingPage.getCurrentUrl()).to.include(\"/ai-stack\");\nawait landingPage.clickNavPlatform();\nexpect(await landingPage.getCurrentUrl()).to.include(\"/platform\");\nawait landingPage.clickNavProof();\nexpect(await landingPage.getCurrentUrl()).to.include(\"/proof\");",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async LandingPage.open (pages\\basePage.js:22:5)\n    at async LandingPage.openLandingPage (pages\\landingPage.js:24:5)\n    at async Context.<anonymous> (tests\\ui-navigation.spec.js:19:5)",
+                "diff": null
+              },
+              "uuid": "5d78945a-1b2a-4524-9137-9294e0346522",
+              "parentUUID": "f4fd5963-c659-478c-ae39-9f54472b3433",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "NAV_02: Validate browser back and forward history actions",
+              "fullTitle": "UI Components & Navigation E2E Test Suite NAV_02: Validate browser back and forward history actions",
+              "timedOut": false,
+              "duration": 318,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await landingPage.goBack();\nexpect(await landingPage.getCurrentUrl()).to.include(\"/platform\");\nawait landingPage.goForward();\nexpect(await landingPage.getCurrentUrl()).to.include(\"/proof\");",
+              "err": {
+                "message": "AssertionError: expected 'http://localhost:5173/register' to include '/platform'",
+                "estack": "AssertionError: expected 'http://localhost:5173/register' to include '/platform'\n    at Context.<anonymous> (tests\\ui-navigation.spec.js:36:50)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)",
+                "diff": null
+              },
+              "uuid": "d4692f50-81b2-497e-9f91-b3331e727e9c",
+              "parentUUID": "f4fd5963-c659-478c-ae39-9f54472b3433",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "UI_01: Validate Receiver Feed search bar and category filters",
+              "fullTitle": "UI Components & Navigation E2E Test Suite UI_01: Validate Receiver Feed search bar and category filters",
+              "timedOut": false,
+              "duration": 561,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "await authPage.openLogin();\nawait authPage.login(config.credentials.receiver.email, config.credentials.receiver.password, \"receiver\");\nawait receiverPage.openFeed();\n// Test Search input\nawait receiverPage.searchFood(\"Biryani\");\nconst currentUrl = await receiverPage.getCurrentUrl();\nexpect(currentUrl).to.include(\"/receiver/feed\");\n// Test Category filter buttons\nawait receiverPage.applyCategoryFilter(\"cooked\");\nawait receiverPage.applyCategoryFilter(\"bakery\");\nawait receiverPage.applyCategoryFilter(\"all\");",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async AuthPage.open (pages\\basePage.js:22:5)\n    at async AuthPage.openLogin (pages\\authPage.js:27:5)\n    at async Context.<anonymous> (tests\\ui-navigation.spec.js:43:5)",
+                "diff": null
+              },
+              "uuid": "be8f2b82-1a63-4909-a365-e8e5889ebf11",
+              "parentUUID": "f4fd5963-c659-478c-ae39-9f54472b3433",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [],
+          "failures": [
+            "5d78945a-1b2a-4524-9137-9294e0346522",
+            "d4692f50-81b2-497e-9f91-b3331e727e9c",
+            "be8f2b82-1a63-4909-a365-e8e5889ebf11"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 3252,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 60000
+        },
+        {
+          "uuid": "139ad130-7282-40d2-ac2d-a6fff0485405",
+          "title": "Dynamic React Route & Form Discovery Test Suite",
+          "fullFile": "C:\\Users\\HP\\Downloads\\SHAREBITE-main\\selenium-tests\\tests\\dynamic-discovery.spec.js",
+          "file": "\\tests\\dynamic-discovery.spec.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Dynamic React Route & Form Discovery Test Suite\"",
+              "fullTitle": "Dynamic React Route & Form Discovery Test Suite \"before all\" hook in \"Dynamic React Route & Form Discovery Test Suite\"",
+              "timedOut": false,
+              "duration": 17,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "basePage = new BasePage(global.driver);\ndiscoveryData = routeFormDiscoverer.discoverRoutesAndForms();\nlogger.info(`Running ${discoveryData.generatedTestCases.length} dynamically generated tests.`);",
+              "err": {},
+              "uuid": "929d0b65-7103-4947-b196-42d4afc1cf35",
+              "parentUUID": "139ad130-7282-40d2-ac2d-a6fff0485405",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "DYN_01: Verify all discovered React routes are accessible or enforce protection",
+              "fullTitle": "Dynamic React Route & Form Discovery Test Suite DYN_01: Verify all discovered React routes are accessible or enforce protection",
+              "timedOut": false,
+              "duration": 704,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "for (const route of discoveryData.routes) {\n  logger.info(`Testing dynamic route access: ${route.path}`);\n  await basePage.open(route.path);\n  const url = await basePage.getCurrentUrl();\n  if (route.isProtected) {\n    expect(url).to.satisfy(\n      (u) => u.includes(\"/login\") || u.includes(route.path)\n    );\n  } else {\n    expect(url).to.include(route.path === \"/\" ? \"/\" : route.path);\n  }\n}",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async BasePage.open (pages\\basePage.js:22:5)\n    at async Context.<anonymous> (tests\\dynamic-discovery.spec.js:19:7)",
+                "diff": null
+              },
+              "uuid": "f1be9412-fafe-44d2-9729-685b9c3a656e",
+              "parentUUID": "139ad130-7282-40d2-ac2d-a6fff0485405",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "DYN_02: Execute dynamically generated test cases from form analysis",
+              "fullTitle": "Dynamic React Route & Form Discovery Test Suite DYN_02: Execute dynamically generated test cases from form analysis",
+              "timedOut": false,
+              "duration": 823,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "for (const testCase of discoveryData.generatedTestCases) {\n  logger.info(`Executing generated test scenario: ${testCase.scenarioName}`);\n  if (testCase.type === \"navigation\") {\n    await basePage.open(testCase.targetUrl);\n    const url = await basePage.getCurrentUrl();\n    expect(url).to.exist;\n  }\n}",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async BasePage.open (pages\\basePage.js:22:5)\n    at async Context.<anonymous> (tests\\dynamic-discovery.spec.js:36:9)",
+                "diff": null
+              },
+              "uuid": "d60ee00f-8232-424e-9630-57049a06d1cc",
+              "parentUUID": "139ad130-7282-40d2-ac2d-a6fff0485405",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [],
+          "failures": [
+            "f1be9412-fafe-44d2-9729-685b9c3a656e",
+            "d60ee00f-8232-424e-9630-57049a06d1cc"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 1527,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 60000
+        },
+        {
+          "uuid": "29b2272e-6b60-4423-a082-cb860e1e83cf",
+          "title": "Complete End-to-End Business Workflow Test Suite",
+          "fullFile": "C:\\Users\\HP\\Downloads\\SHAREBITE-main\\selenium-tests\\tests\\e2e-workflow.spec.js",
+          "file": "\\tests\\e2e-workflow.spec.js",
+          "beforeHooks": [
+            {
+              "title": "\"before all\" hook in \"Complete End-to-End Business Workflow Test Suite\"",
+              "fullTitle": "Complete End-to-End Business Workflow Test Suite \"before all\" hook in \"Complete End-to-End Business Workflow Test Suite\"",
+              "timedOut": false,
+              "duration": 0,
+              "state": null,
+              "speed": null,
+              "pass": false,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "authPage = new AuthPage(global.driver);\ndonorPage = new DonorDashboardPage(global.driver);\nreceiverPage = new ReceiverDashboardPage(global.driver);",
+              "err": {},
+              "uuid": "a9572a00-0af1-46ba-8733-eef5244bc9a1",
+              "parentUUID": "29b2272e-6b60-4423-a082-cb860e1e83cf",
+              "isHook": true,
+              "skipped": false
+            }
+          ],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "E2E_01: Complete Donor Publishing to Receiver Claiming & Verification Workflow",
+              "fullTitle": "Complete End-to-End Business Workflow Test Suite E2E_01: Complete Donor Publishing to Receiver Claiming & Verification Workflow",
+              "timedOut": false,
+              "duration": 933,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "// Step 1: Donor Login & Listing Creation\nlogger.info(\"E2E Workflow Step 1: Donor Login & Listing Creation\");\nawait authPage.openLogin();\nawait authPage.login(config.credentials.donor.email, config.credentials.donor.password, \"donor\");\nconst listingTitle = `Fresh Meals Batch ${Date.now()}`;\nawait donorPage.createDonationListing({\n  title: listingTitle,\n  category: \"Cooked Meals\",\n  quantity: 50,\n  location: \"Kukatpally, Hyderabad\",\n  phone: \"+91 9876543210\",\n  pickupWindow: \"5 PM - 8 PM\",\n  hours: 6,\n  notes: \"Freshly prepared vegetable meals ready for immediate dispatch.\"\n});\nawait donorPage.logout();\n// Step 2: Receiver Login & Food Claiming\nlogger.info(\"E2E Workflow Step 2: Receiver Login & Claim Request\");\nawait authPage.openLogin();\nawait authPage.login(config.credentials.receiver.email, config.credentials.receiver.password, \"receiver\");\nawait receiverPage.openFeed();\nawait receiverPage.claimFirstListing();\nawait receiverPage.logout();\n// Step 3: Donor Approval of Claim Request\nlogger.info(\"E2E Workflow Step 3: Donor Approval\");\nawait authPage.openLogin();\nawait authPage.login(config.credentials.donor.email, config.credentials.donor.password, \"donor\");\nawait donorPage.approveFirstClaim();\nconst finalUrl = await donorPage.getCurrentUrl();\nexpect(finalUrl).to.include(\"/donor\");",
+              "err": {
+                "message": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)",
+                "estack": "WebDriverError: unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=150.0.7871.187)\n    at Object.throwDecodedError (node_modules\\selenium-webdriver\\lib\\error.js:523:15)\n    at parseHttpResponse (node_modules\\selenium-webdriver\\lib\\http.js:527:13)\n    at Executor.execute (node_modules\\selenium-webdriver\\lib\\http.js:459:28)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async Driver.execute (node_modules\\selenium-webdriver\\lib\\webdriver.js:745:17)\n    at async AuthPage.open (pages\\basePage.js:22:5)\n    at async AuthPage.openLogin (pages\\authPage.js:27:5)\n    at async Context.<anonymous> (tests\\e2e-workflow.spec.js:22:5)",
+                "diff": null
+              },
+              "uuid": "bdceb788-99d1-4c03-9440-baff3fc3eb35",
+              "parentUUID": "29b2272e-6b60-4423-a082-cb860e1e83cf",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [],
+          "failures": [
+            "bdceb788-99d1-4c03-9440-baff3fc3eb35"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 933,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 60000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 60000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "10.8.2"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.4"
+    },
+    "marge": {
+      "options": {
+        "[object Object]": true
+      },
+      "version": "6.3.2"
+    }
+  }
+}
