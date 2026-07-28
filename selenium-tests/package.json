@@ -32,6 +32,7 @@
     "@babel/parser": "^7.26.0",
     "@babel/traverse": "^7.26.0",
     "chai": "^4.3.7",
+    "chromedriver": "^133.0.0",
     "dotenv": "^16.4.5",
     "exceljs": "^4.4.0",
     "mocha": "^10.2.0",

@@ -2,6 +2,7 @@ const { Builder } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const firefox = require("selenium-webdriver/firefox");
 const edge = require("selenium-webdriver/edge");
+try { require("chromedriver"); } catch {}
 const config = require("../config/framework.config");
 const logger = require("./logger");
 
