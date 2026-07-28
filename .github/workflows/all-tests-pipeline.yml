@@ -1,4 +1,4 @@
-name: SHAREBITE Automation & Load Testing Pipeline (All 4 Test Suites)
+name: SHAREBITE Automation & Security Pipeline (All Test Suites)
 
 on:
   push:
@@ -202,12 +202,50 @@ jobs:
           retention-days: 30
 
   # ---------------------------------------------------------------------------
-  # 5. Consolidated Excel Artifacts Bundle (All 4 Excel Reports)
+  # 5. Vulnerability & Security Penetration Test Suite (300+ Cases)
+  # ---------------------------------------------------------------------------
+  vulnerability-security-tests:
+    name: 🛡️ 5. Vulnerability & Security Suite (310 Cases)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: 3. Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openpyxl
+
+      - name: 4. Generate Vulnerability 300+ Test Excel Report
+        run: |
+          cd vulnerability-tests
+          python generate_report.py
+
+      - name: 5. Execute Vulnerability Security Test Runner
+        run: |
+          cd vulnerability-tests
+          npm test || true
+
+      - name: 6. Upload Vulnerability Security Excel Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 5-Vulnerability-Security-Report-Excel
+          path: vulnerability-tests/vulnerability_test_cases_report.xlsx
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # 6. Consolidated Excel Artifacts Bundle (All Excel Reports)
   # ---------------------------------------------------------------------------
   consolidated-reports-bundle:
-    name: 📦 5. Bundle All 4 Test Excel Reports
+    name: 📦 6. Bundle All Test Excel Reports
     runs-on: ubuntu-latest
-    needs: [selenium-e2e-tests, selenium-login-suite, appium-mobile-tests, load-performance-tests]
+    needs: [selenium-e2e-tests, selenium-login-suite, appium-mobile-tests, load-performance-tests, vulnerability-security-tests]
     if: always()
     steps:
       - name: 1. Checkout Repository
@@ -237,9 +275,15 @@ jobs:
           name: 4-Load-Performance-Report-Excel
           path: artifacts-bundle/
 
-      - name: 6. Upload Combined All-4-Test-Excel-Reports Artifact Bundle
+      - name: 6. Download Vulnerability Security Excel Report
+        uses: actions/download-artifact@v4
+        with:
+          name: 5-Vulnerability-Security-Report-Excel
+          path: artifacts-bundle/
+
+      - name: 7. Upload Combined All-Test-Excel-Reports Artifact Bundle
         uses: actions/upload-artifact@v4
         with:
-          name: SHAREBITE-All-4-Test-Excel-Reports-Bundle
+          name: SHAREBITE-All-5-Test-Excel-Reports-Bundle
           path: artifacts-bundle/
           retention-days: 30
