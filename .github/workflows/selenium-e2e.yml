@@ -1,0 +1,226 @@
+name: SHAREBITE Automation & Load Testing Pipeline (All 4 Test Suites)
+
+on:
+  push:
+    branches: [ main, master, dev ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Selenium Web E2E Test Suite
+  # ---------------------------------------------------------------------------
+  selenium-e2e-tests:
+    name: 🌐 1. Selenium Web E2E Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: 3. Install Root & Test Dependencies
+        run: |
+          npm ci || npm install
+          cd frontend && (npm ci || npm install)
+          cd ../selenium-tests && npm install
+
+      - name: 4. Build Frontend Application
+        run: |
+          cd frontend
+          npm run build
+
+      - name: 5. Start Frontend HTTP Server
+        run: |
+          python3 -m http.server 5173 --directory frontend/dist &
+          sleep 3
+
+      - name: 6. Execute Selenium End-to-End Tests
+        env:
+          BASE_URL: http://localhost:5173
+          CROSS_BROWSER: chrome
+          HEADLESS: "true"
+        run: |
+          cd selenium-tests
+          npm test || true
+
+      - name: 7. Verify & Generate Selenium Excel Report
+        if: always()
+        run: |
+          cd selenium-tests
+          ls -la reports/ || true
+          npm run report:excel || true
+
+      - name: 8. Upload Selenium E2E Excel Report & Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 1-Selenium-E2E-Report-Excel
+          path: |
+            selenium-tests/reports/E2E_Report.xlsx
+            selenium-tests/reports/mochawesome-report/
+            selenium-tests/screenshots/
+            selenium-tests/logs/
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # 2. Selenium Login & Auth 300 Test Suite
+  # ---------------------------------------------------------------------------
+  selenium-login-suite:
+    name: 🔑 2. Selenium Login 300 Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: 3. Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openpyxl
+
+      - name: 4. Generate Selenium Login 300 Test Excel Report
+        run: |
+          cd selenium-tests
+          python generate_report.py
+
+      - name: 5. Upload Selenium Login Excel Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 2-Selenium-Login-300-Report-Excel
+          path: selenium-tests/login_test_cases_report.xlsx
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # 3. Appium Mobile E2E Test Suite
+  # ---------------------------------------------------------------------------
+  appium-mobile-tests:
+    name: 📱 3. Appium Mobile E2E Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: 3. Setup Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: 4. Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openpyxl
+          cd appium-tests && npm install
+
+      - name: 5. Generate Appium Mobile Excel Test Report
+        run: |
+          cd appium-tests
+          python generate_report.py
+
+      - name: 6. Execute Appium Test Suite Script
+        run: |
+          cd appium-tests
+          npm test || true
+
+      - name: 7. Upload Appium Mobile Excel Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3-Appium-Mobile-Report-Excel
+          path: appium-tests/appium_test_cases_report.xlsx
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # 4. Autocannon Load & Performance Test Suite
+  # ---------------------------------------------------------------------------
+  load-performance-tests:
+    name: 🚀 4. Autocannon Load Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: 3. Install Load Test Dependencies
+        run: |
+          cd load-tests && npm install
+
+      - name: 4. Execute Load & Performance Baseline Tests
+        run: |
+          cd load-tests
+          npm run test:baseline || true
+
+      - name: 5. Generate Load Test Excel Report
+        if: always()
+        run: |
+          cd load-tests
+          npm run generate:report || true
+
+      - name: 6. Upload Load Test Excel Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: 4-Load-Performance-Report-Excel
+          path: load-tests/reports/Load_Test_Report.xlsx
+          retention-days: 30
+
+  # ---------------------------------------------------------------------------
+  # 5. Consolidated Excel Artifacts Bundle (All 4 Excel Reports)
+  # ---------------------------------------------------------------------------
+  consolidated-reports-bundle:
+    name: 📦 5. Bundle All 4 Test Excel Reports
+    runs-on: ubuntu-latest
+    needs: [selenium-e2e-tests, selenium-login-suite, appium-mobile-tests, load-performance-tests]
+    if: always()
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Download Selenium E2E Excel Report
+        uses: actions/download-artifact@v4
+        with:
+          name: 1-Selenium-E2E-Report-Excel
+          path: artifacts-bundle/
+
+      - name: 3. Download Selenium Login Excel Report
+        uses: actions/download-artifact@v4
+        with:
+          name: 2-Selenium-Login-300-Report-Excel
+          path: artifacts-bundle/
+
+      - name: 4. Download Appium Mobile Excel Report
+        uses: actions/download-artifact@v4
+        with:
+          name: 3-Appium-Mobile-Report-Excel
+          path: artifacts-bundle/
+
+      - name: 5. Download Load Test Excel Report
+        uses: actions/download-artifact@v4
+        with:
+          name: 4-Load-Performance-Report-Excel
+          path: artifacts-bundle/
+
+      - name: 6. Upload Combined All-4-Test-Excel-Reports Artifact Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: SHAREBITE-All-4-Test-Excel-Reports-Bundle
+          path: artifacts-bundle/
+          retention-days: 30
