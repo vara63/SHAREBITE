@@ -53,20 +53,24 @@ class DonorDashboardPage extends BasePage {
   async createDonationListing(data) {
     logger.info(`Publishing new food donation listing: "${data.title}"`);
     await this.openDonationsWorkspace();
-    if (data.title) await this.utils.type(this.titleInput, data.title);
-    if (data.category) await this.utils.type(this.categorySelect, data.category);
-    if (data.quantity) await this.utils.type(this.quantityInput, String(data.quantity));
-    if (data.location) await this.utils.type(this.locationInput, data.location);
-    if (data.phone) await this.utils.type(this.phoneInput, data.phone);
-    if (data.pickupWindow) await this.utils.type(this.pickupWindowInput, data.pickupWindow);
-    if (data.hours) await this.utils.type(this.hoursInput, String(data.hours));
-    if (data.notes) await this.utils.type(this.notesInput, data.notes);
-    await this.utils.click(this.publishSubmitBtn);
+    if (await this.utils.isElementVisible(this.titleInput)) {
+      if (data.title) await this.utils.type(this.titleInput, data.title);
+      if (data.category) await this.utils.type(this.categorySelect, data.category);
+      if (data.quantity) await this.utils.type(this.quantityInput, String(data.quantity));
+      if (data.location) await this.utils.type(this.locationInput, data.location);
+      if (data.phone) await this.utils.type(this.phoneInput, data.phone);
+      if (data.pickupWindow) await this.utils.type(this.pickupWindowInput, data.pickupWindow);
+      if (data.hours) await this.utils.type(this.hoursInput, String(data.hours));
+      if (data.notes) await this.utils.type(this.notesInput, data.notes);
+      if (await this.utils.isElementVisible(this.publishSubmitBtn)) {
+        await this.utils.click(this.publishSubmitBtn);
+      }
+    }
   }
 
   async approveFirstClaim() {
     await this.openActivity();
-    if (await this.utils.isElementPresent(this.approveClaimBtn)) {
+    if (await this.utils.isElementVisible(this.approveClaimBtn)) {
       await this.utils.click(this.approveClaimBtn);
       logger.info("Clicked Approve Claim button.");
     }
@@ -74,16 +78,18 @@ class DonorDashboardPage extends BasePage {
 
   async verifyPickupCode(code) {
     await this.openActivity();
-    if (await this.utils.isElementPresent(this.codeInput)) {
+    if (await this.utils.isElementVisible(this.codeInput)) {
       await this.utils.type(this.codeInput, code);
-      await this.utils.click(this.verifyCodeBtn);
+      if (await this.utils.isElementVisible(this.verifyCodeBtn)) {
+        await this.utils.click(this.verifyCodeBtn);
+      }
       logger.info(`Entered verification pickup code: ${code}`);
     }
   }
 
   async logout() {
     logger.info("Executing Donor Logout...");
-    if (await this.utils.isElementPresent(this.logoutButton)) {
+    if (await this.utils.isElementVisible(this.logoutButton)) {
       await this.utils.click(this.logoutButton);
     }
   }

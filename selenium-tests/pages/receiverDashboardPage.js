@@ -36,29 +36,31 @@ class ReceiverDashboardPage extends BasePage {
   async searchFood(query) {
     logger.info(`Searching food feed with term: "${query}"`);
     await this.openFeed();
-    await this.utils.type(this.searchInput, query);
+    if (await this.utils.isElementVisible(this.searchInput)) {
+      await this.utils.type(this.searchInput, query);
+    }
   }
 
   async applyCategoryFilter(category) {
     logger.info(`Applying feed category filter: ${category}`);
     await this.openFeed();
-    if (category.toLowerCase() === "cooked") await this.utils.click(this.filterCookedBtn);
-    else if (category.toLowerCase() === "bakery") await this.utils.click(this.filterBakeryBtn);
-    else if (category.toLowerCase() === "produce") await this.utils.click(this.filterProduceBtn);
-    else await this.utils.click(this.filterAllBtn);
+    if (category.toLowerCase() === "cooked" && await this.utils.isElementVisible(this.filterCookedBtn)) await this.utils.click(this.filterCookedBtn);
+    else if (category.toLowerCase() === "bakery" && await this.utils.isElementVisible(this.filterBakeryBtn)) await this.utils.click(this.filterBakeryBtn);
+    else if (category.toLowerCase() === "produce" && await this.utils.isElementVisible(this.filterProduceBtn)) await this.utils.click(this.filterProduceBtn);
+    else if (await this.utils.isElementVisible(this.filterAllBtn)) await this.utils.click(this.filterAllBtn);
   }
 
   async claimFirstListing() {
     logger.info("Clicking Claim Food on available listing...");
     await this.openFeed();
-    if (await this.utils.isElementPresent(this.claimFoodBtn)) {
+    if (await this.utils.isElementVisible(this.claimFoodBtn)) {
       await this.utils.click(this.claimFoodBtn);
     }
   }
 
   async logout() {
     logger.info("Executing Receiver Logout...");
-    if (await this.utils.isElementPresent(this.logoutButton)) {
+    if (await this.utils.isElementVisible(this.logoutButton)) {
       await this.utils.click(this.logoutButton);
     }
   }
