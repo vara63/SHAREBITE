@@ -23,7 +23,8 @@ describe("Form Validation & Input Rules E2E Test Suite", function () {
     await authPage.openRegister();
     await authPage.register("Test User", "invalid_email_format", "Pass123!", "Hyderabad", "donor");
     const errorMsg = await authPage.getErrorMessage();
-    expect(url = await authPage.getCurrentUrl()).to.include("/register");
+    const currentUrl = await authPage.getCurrentUrl();
+    expect(currentUrl).to.include("/register");
   });
 
   it("FORM_03: Validate Registration field minimum length rules", async function () {

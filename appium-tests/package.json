@@ -1,0 +1,23 @@
+{
+  "name": "sharebite-appium-tests",
+  "version": "1.0.0",
+  "description": "Appium Mobile E2E Automation Test Suite for SHAREBITE App",
+  "main": "tests/app-e2e-tests.js",
+  "scripts": {
+    "test": "node tests/app-e2e-tests.js",
+    "generate-excel": "python generate_report.py"
+  },
+  "keywords": [
+    "appium",
+    "webdriverio",
+    "mobile",
+    "e2e",
+    "testing",
+    "sharebite"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "webdriverio": "^8.32.0"
+  }
+}

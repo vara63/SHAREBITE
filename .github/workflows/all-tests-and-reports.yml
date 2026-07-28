@@ -48,7 +48,7 @@ jobs:
           CROSS_BROWSER: chrome
         run: |
           cd selenium-tests
-          npm test || true
+          npm test
 
       - name: Generate Excel Report
         if: always()
